@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1 th:text="'Notes count: ' + ${notes.size()}"></h1>
+
+<div th:each="note : ${notes}">
+  <div th:text="'id: ' + ${note.id}"></div>
+  <div th:text="'Title: ' + ${note.title}"></div>
+  <div th:text="'Content: ' + ${note.content}"></div>
+  <a th:href="'http://localhost:8080/note/edit?id=' + ${note.id}">Update</a>
+</div>
+
+<div class="container">
+  <form action="/note/create" method="post" class="container col-4">
+    <div class="form-group mb-2">
+      <label for="title">Title</label>
+      <input type="text" name="title" class="form-control" id="title" aria-describedby="noteTitleHelp" placeholder="Enter note title">
+      <small id="noteTitleHelp" class="form-text text-muted">Title > 2 and < 250.</small>
+    </div>
+    <div class="form-group mb-2">
+      <label for="noteContent">Content</label>
+      <input type="text" name="content" class="form-control" id="noteContent" placeholder="Content">
+    </div>
+    <button type="submit" class="btn btn-primary margin-bottom 2">Create</button>
+  </form>
+</div>
+
+<form action="/note/delete" method="post">
+  <div>
+    <label for="id-for-delete">Id for delete:</label>
+    <input type="text" name="id" id="id-for-delete"/>
+  </div>
+
+  <div>
+    <button type="submit">Delete</button>
+  </div>
+</form>
+</body>
+</html>
