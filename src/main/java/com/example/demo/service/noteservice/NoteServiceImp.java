@@ -1,8 +1,7 @@
 package com.example.demo.service.noteservice;
 
-
 import com.example.demo.data.entity.NoteEntity;
-import com.example.demo.data.repository.NoteRepository;
+import com.example.demo.data.repository.NoteNewRepositoryJpa;
 import com.example.demo.mapper.NoteMapper;
 import com.example.demo.service.dto.NoteDto;
 import com.example.demo.service.exception.NoteNotFoundException;
@@ -11,13 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class NoteServiceImp implements NoteService{
-    @Autowired private NoteRepository noteRepository;
+    @Autowired private NoteNewRepositoryJpa noteRepository;
     @Autowired private NoteMapper noteMapper;
 
     @Override
@@ -34,28 +32,24 @@ public class NoteServiceImp implements NoteService{
 
     @Override
     public void deleteById(UUID id) throws NoteNotFoundException {
-        getById(id);
+        if (!noteRepository.existsById(id)) {
+            throw new NoteNotFoundException(id);
+        }
         noteRepository.deleteById(id);
     }
 
     @Override
     public void update(NoteDto note) throws NoteNotFoundException {
-        if (Objects.isNull(note.getId())) {
+        if (Objects.isNull(note.getId()) || !noteRepository.existsById(note.getId())) {
             throw new NoteNotFoundException();
         }
-        getById(note.getId());
         noteRepository.save(noteMapper.toNoteEntity(note));
     }
 
-
     @Override
     public NoteDto getById(UUID id) throws NoteNotFoundException {
-        Optional<NoteEntity> optionalNote = noteRepository.findById(id);
-        if (optionalNote.isPresent()) {
-            return noteMapper.toNoteDto(optionalNote.get());
-        } else {
-            throw new NoteNotFoundException(id);
-        }
+        return noteRepository.findById(id)
+                .map(noteMapper::toNoteDto)
+                .orElseThrow(() -> new NoteNotFoundException(id));
     }
-
 }

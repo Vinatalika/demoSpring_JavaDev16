@@ -1,0 +1,5 @@
+CREATE TABLE note (
+    id UUID DEFAULT UUID() PRIMARY KEY,
+    title VARCHAR(250) NOT NULL CHECK (LENGTH(title) >= 2 AND LENGTH(title) <= 250),
+    content VARCHAR NOT NULL
+);
