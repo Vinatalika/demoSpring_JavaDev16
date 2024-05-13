@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class NoteServiceImp implements NoteService{
+public class NoteServiceImpl implements NoteService{
     @Autowired private NoteNewRepositoryJpa noteRepository;
     @Autowired private NoteMapper noteMapper;
 

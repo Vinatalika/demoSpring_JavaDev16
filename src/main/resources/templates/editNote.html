@@ -10,7 +10,8 @@
         <label for="idForUpdate">Id:</label>
         <input type="text" name="id" id="idForUpdate" th:value="${note.id}" contenteditable="false"/>
     </div>
-
+    <!-- Приховане поле для передачі userId -->
+    <input type="hidden" name="user_id" value="1">
     <div>
         <label for="titleForUpdate">Title:</label>
         <input type="text" name="title" id="titleForUpdate" th:value="${note.title}"/>

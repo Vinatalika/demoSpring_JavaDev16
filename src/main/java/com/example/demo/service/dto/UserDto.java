@@ -1,25 +1,22 @@
 package com.example.demo.service.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoteDto {
 
-    private UUID id;
-    private String title;
-    private String content;
+public class UserDto {
+    private Long id;
     private String username;
-
-    public void setUsername(UserDto userDto) {
-
-    }
+    private String password;
+    private String role;
+    private Boolean enabled;
+    private List<NoteDto> notes;
 }

@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.mapper.NoteMapper;
+import com.example.demo.mapper.UserMapper;
+import com.example.demo.service.exception.UserNotFoundException;
+import com.example.demo.service.userservice.UserService;
 import com.example.demo.service.dto.NoteDto;
+import com.example.demo.service.dto.UserDto;
 import com.example.demo.service.exception.NoteNotFoundException;
 import com.example.demo.service.noteservice.NoteService;
 import jakarta.validation.constraints.NotBlank;
@@ -22,19 +26,29 @@ public class NoteController {
     @Autowired
     private NoteMapper noteMapper;
 
-    // Обробляє форму створення нотатки
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserMapper userMapper;
+
     @PostMapping("/create")
     public String createNote(
             @RequestParam("title") @NotBlank String title,
-            @RequestParam("content") @NotBlank String content) {
+            @RequestParam("content") @NotBlank String content,
+            @RequestParam("user_id") Long userId) throws UserNotFoundException {
         NoteDto dto = new NoteDto();
         dto.setTitle(title);
         dto.setContent(content);
+
+        UserDto userDto = userMapper.toUserDto(userService.findById(userId));
+        dto.setUsername(userDto);
+
         noteService.add(dto);
-        return "redirect:/note/list"; // Перенаправляє на сторінку списку нотаток
+        return "redirect:/note/list";
     }
 
-    //Показує сторінку для редагування нотатки
+
     @GetMapping("/edit")
     public ModelAndView getNoteForEdit(@RequestParam("id") UUID id) throws NoteNotFoundException {
         ModelAndView modelAndView = new ModelAndView("editNote");
@@ -42,21 +56,25 @@ public class NoteController {
         return modelAndView;
     }
 
-    // Обробляє форму редагування нотатки
+
     @PostMapping("/update")
     public String updateNote(
             @RequestParam("id") UUID id,
             @RequestParam("title") @NotBlank String title,
-            @RequestParam("content") @NotBlank String content) throws NoteNotFoundException {
+            @RequestParam("content") @NotBlank String content,
+            @RequestParam("user_id") Long user_id) throws NoteNotFoundException, UserNotFoundException {
         NoteDto dto = new NoteDto();
         dto.setId(id);
         dto.setTitle(title);
         dto.setContent(content);
+
+        UserDto userDto = userMapper.toUserDto(userService.findById(user_id));
+        dto.setUsername(userDto);
+
         noteService.update(dto);
-        return "redirect:/note/list"; // Перенаправляє на сторінку списку нотаток
+        return "redirect:/note/list";
     }
 
-    // Показує список нотаток
     @GetMapping("/list")
     public ModelAndView noteList() {
         ModelAndView modelAndView = new ModelAndView("noteList");
@@ -64,10 +82,9 @@ public class NoteController {
         return modelAndView;
     }
 
-    // Видаляє нотатку
     @PostMapping("/delete")
     public String deleteNoteById(@RequestParam("id") UUID id) throws NoteNotFoundException {
         noteService.deleteById(id);
-        return "redirect:/note/list"; // Перенаправляє на сторінку списку нотаток
+        return "redirect:/note/list";
     }
 }
